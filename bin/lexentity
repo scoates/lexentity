@@ -1,0 +1,11 @@
+#!/Users/sean/bin/php53
+<?php
+$dir = dirname(__FILE__);
+require "$dir/../inc/Lexer.php";
+require "$dir/../inc/Tokens.php";
+
+echo LexEntity\Token\Set::getInstance(
+    new LexEntity\Lexer(
+        file_get_contents('php://stdin')
+    )
+)->asString();
