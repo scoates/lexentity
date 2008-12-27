@@ -2,6 +2,7 @@
 
 require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../inc/Lexer.php';
+require_once dirname(__FILE__) . '/../inc/Tokens.php';
 
 class UserControllerTest extends PHPUnit_Framework_TestCase
 {
@@ -30,8 +31,6 @@ class UserControllerTest extends PHPUnit_Framework_TestCase
     public function testTranslationComplex()
     {
         $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::COMPLEXTEXT));
-        echo $set->asString();
-        return;
-        $this->assertEquals('This is O&#8217;Reilly&#8217;s book, entitled &#8220;Foo <em class="foo">Bars</em> for Baz!&#8221;', $set->asString());
+        $this->assertEquals('O&#8217;Reilly&#8217;s book, <code>Don\'t touch this: "Foo <em class="foo">Bars</em></code> for Baz!&#8221;', $set->asString());
     }
 }
