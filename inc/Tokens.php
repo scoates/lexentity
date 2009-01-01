@@ -10,6 +10,7 @@ abstract class Token
         'Ellipsis' => '\.{3,}',
         'Quote' => '"',
         'Tag' => '<.*?>',
+        'Emdash' => '—|--',
     );
     
     protected function __construct($text)
@@ -22,7 +23,7 @@ abstract class Token
         $regex = '/';
         $counter = count(self::$types);
         foreach (self::$types as $type) {
-            $regex .= '(' . addslashes($type) .')';
+            $regex .= '(' . $type .')';
             if (--$counter) {
                 $regex .= '|';
             }
@@ -35,7 +36,7 @@ abstract class Token
     {
         // this is slow, but effective
         foreach (self::$types as $type => $regex) {
-            if (preg_match('/^' . addslashes($regex) . '$/', $text)) {
+            if (preg_match('/^' . $regex . '$/', $text)) {
                 $class = __NAMESPACE__ . '\\' . $type;
                 return $class::createSubType($text);
             }
@@ -74,6 +75,10 @@ class Apostrophe extends Token
 class Ellipsis extends Token
 {
     protected $translatedText = '&#8230;';
+}
+class Emdash extends Token
+{
+    protected $translatedText = '&#8212;';
 }
 class Quote extends Token
 {

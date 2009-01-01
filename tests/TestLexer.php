@@ -8,6 +8,7 @@ class UserControllerTest extends PHPUnit_Framework_TestCase
 {
     const SIMPLETEXT = 'This is O\'Reilly\'s book, entitled "Foo <em class="foo">Bars</em> for Baz!"';
     const COMPLEXTEXT = 'O\'Reilly\'s book, <code>Don\'t touch this: "Foo <em class="foo">Bars</em></code> for Baz!"';
+    const REPLACETEXT = 'Foo... bar—baz, bar--baz <code>foo--bar...baz—bar!</code> whatever—I don\'t care';
     
     public function testSplit()
     {
@@ -32,5 +33,12 @@ class UserControllerTest extends PHPUnit_Framework_TestCase
     {
         $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::COMPLEXTEXT));
         $this->assertEquals('O&#8217;Reilly&#8217;s book, <code>Don\'t touch this: "Foo <em class="foo">Bars</em></code> for Baz!&#8221;', $set->asString());
+    }
+
+    public function testTranslationReplace()
+    {
+        $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::REPLACETEXT));
+        var_dump($set->asString());
+        //$this->assertEquals('Foo... bar—baz, bar--baz <code>foo--bar...baz—bar!</code> whatever—I don\'t care', $set->asString());
     }
 }
