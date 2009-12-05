@@ -1,4 +1,4 @@
-#!/Users/sean/bin/php53
+#!/usr/bin/env php
 <?php
 $dir = dirname(__FILE__);
 require "$dir/../inc/Lexer.php";
