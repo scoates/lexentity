@@ -9,6 +9,7 @@ class UserControllerTest extends PHPUnit_Framework_TestCase
     const SIMPLETEXT = 'This is O\'Reilly\'s book, entitled "Foo <em class="foo">Bars</em> for Baz!"';
     const COMPLEXTEXT = 'O\'Reilly\'s book, <code>Don\'t touch this: "Foo <em class="foo">Bars</em></code> for Baz!"';
     const REPLACETEXT = 'Foo... bar—baz, bar--baz <code>foo--bar...baz—bar!</code> <pre>foo--bar...baz—bar!</pre> whatever—I don\'t care';
+    const URLTEXT = 'Hello <a href="http://example.com/foo=1&bar=2">person</a>.';
     
     public function testSplit()
     {
@@ -40,4 +41,11 @@ class UserControllerTest extends PHPUnit_Framework_TestCase
         $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::REPLACETEXT));
         $this->assertEquals('Foo&#8230; bar&#8202;&#8212;&#8202;baz, bar&#8202;&#8212;&#8202;baz <code>foo--bar...baz—bar!</code> <pre>foo--bar...baz—bar!</pre> whatever&#8202;&#8212;&#8202;I don&#8217;t care', $set->asString());
     }
+    
+    public function testTranslationURL()
+    {
+        $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::URLTEXT));
+        $this->assertEquals('Hello <a href="http://example.com/foo=1&38;bar=2">person</a>.', $set->asString());
+    }
+
 }
