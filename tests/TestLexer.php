@@ -38,7 +38,6 @@ class UserControllerTest extends PHPUnit_Framework_TestCase
     public function testTranslationReplace()
     {
         $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::REPLACETEXT));
-        var_dump($set->asString());
-        //$this->assertEquals('Foo... bar—baz, bar--baz <code>foo--bar...baz—bar!</code> whatever—I don\'t care', $set->asString());
+        $this->assertEquals('Foo&#8230; bar&#8202;&#8212;&#8202;baz, bar&#8202;&#8212;&#8202;baz <code>foo--bar...baz—bar!</code> whatever&#8202;&#8212;&#8202;I don&#8217;t care', $set->asString());
     }
 }
