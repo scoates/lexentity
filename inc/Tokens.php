@@ -12,6 +12,9 @@ abstract class Token
         'Tag' => '<.*?>',
         'Emdash' => '—|--',
     );
+    protected static $verbatimTags = array(
+        'code','pre',
+    );
     
     protected function __construct($text)
     {
@@ -57,7 +60,7 @@ abstract class Token
     public function asString()
     {
         $set = Set::getInstance();
-        if ($set->inTagContext('code')) {
+        if ($set->inTagContext(self::$verbatimTags)) {
             return $this->text;
         } else {
             return $this->translated();
@@ -192,9 +195,17 @@ class Set implements \Iterator
         }
     }
     
-    public function inTagContext($tag)
+    public function inTagContext($tags)
     {
-        return in_array($tag, $this->tagContext);
+        if (!is_array($tags)) {
+            return in_array($tags, $this->tagContext);
+        }
+        foreach ($tags as $tag) {
+            if (in_array($tag, $this->tagContext)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     //// ITERATOR:
