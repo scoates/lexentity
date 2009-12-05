@@ -10,6 +10,7 @@ class UserControllerTest extends PHPUnit_Framework_TestCase
     const COMPLEXTEXT = 'O\'Reilly\'s book, <code>Don\'t touch this: "Foo <em class="foo">Bars</em></code> for Baz!"';
     const REPLACETEXT = 'Foo... bar—baz, bar--baz <code>foo--bar...baz—bar!</code> <pre>foo--bar...baz—bar!</pre> whatever—I don\'t care';
     const URLTEXT = 'Hello <a href="http://example.com/foo=1&bar=2">person</a>.';
+    const NONENTITYTEXT = 'I went to the A&P after the A&W where I got free fries with a drink &4 burgers. That made mom & dad &#8220;happy&#8221;.';
     
     public function testSplit()
     {
@@ -48,4 +49,9 @@ class UserControllerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Hello <a href="http://example.com/foo=1&38;bar=2">person</a>.', $set->asString());
     }
 
+    public function testTranslationNonEntity()
+    {
+        $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::NONENTITYTEXT));
+        $this->assertEquals('I went to the A&amp;P after the A&amp;W where I got free fries with a drink &amp;4 burgers. That made mom &amp; dad &#8220;happy&#8221;.', $set->asString());
+    }
 }
