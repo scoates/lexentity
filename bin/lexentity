@@ -8,4 +8,4 @@ echo LexEntity\Token\Set::getInstance(
     new LexEntity\Lexer(
         file_get_contents('php://stdin')
     )
-)->asString();
+);
