@@ -57,7 +57,7 @@ abstract class Token
         return $this->translatedText ? $this->translatedText : $this->text;
     }
     
-    public function asString()
+    public function __toString()
     {
         $set = Set::getInstance();
         if ($set->inTagContext(self::$verbatimTags)) {
@@ -158,11 +158,11 @@ class Set implements \Iterator
         $this->Lexer = $lexer;
     }
     
-    public function asString()
+    public function __toString()
     {
         $ret = '';
         foreach ($this as $token) {
-            $ret .= Token::create($token)->asString();
+            $ret .= (string)Token::create($token);
         }
         return $ret;
     }

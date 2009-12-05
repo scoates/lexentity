@@ -28,30 +28,30 @@ class UserControllerTest extends PHPUnit_Framework_TestCase
     public function testTranslation()
     {
         $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::SIMPLETEXT));
-        $this->assertEquals('This is O&#8217;Reilly&#8217;s book, entitled &#8220;Foo <em class="foo">Bars</em> for Baz!&#8221;', $set->asString());
+        $this->assertEquals('This is O&#8217;Reilly&#8217;s book, entitled &#8220;Foo <em class="foo">Bars</em> for Baz!&#8221;', (string)$set);
     }
     
     public function testTranslationComplex()
     {
         $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::COMPLEXTEXT));
-        $this->assertEquals('O&#8217;Reilly&#8217;s book, <code>Don\'t touch this: "Foo <em class="foo">Bars</em></code> for Baz!&#8221;', $set->asString());
+        $this->assertEquals('O&#8217;Reilly&#8217;s book, <code>Don\'t touch this: "Foo <em class="foo">Bars</em></code> for Baz!&#8221;', (string)$set);
     }
 
     public function testTranslationReplace()
     {
         $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::REPLACETEXT));
-        $this->assertEquals('Foo&#8230; bar&#8202;&#8212;&#8202;baz, bar&#8202;&#8212;&#8202;baz <code>foo--bar...baz—bar!</code> <pre>foo--bar...baz—bar!</pre> whatever&#8202;&#8212;&#8202;I don&#8217;t care', $set->asString());
+        $this->assertEquals('Foo&#8230; bar&#8202;&#8212;&#8202;baz, bar&#8202;&#8212;&#8202;baz <code>foo--bar...baz—bar!</code> <pre>foo--bar...baz—bar!</pre> whatever&#8202;&#8212;&#8202;I don&#8217;t care', (string)$set);
     }
     
     public function testTranslationURL()
     {
         $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::URLTEXT));
-        $this->assertEquals('Hello <a href="http://example.com/foo=1&38;bar=2">person</a>.', $set->asString());
+        $this->assertEquals('Hello <a href="http://example.com/foo=1&38;bar=2">person</a>.', (string)$set);
     }
 
     public function testTranslationNonEntity()
     {
         $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::NONENTITYTEXT));
-        $this->assertEquals('I went to the A&amp;P after the A&amp;W where I got free fries with a drink &amp;4 burgers. That made mom &amp; dad &#8220;happy&#8221;.', $set->asString());
+        $this->assertEquals('I went to the A&amp;P after the A&amp;W where I got free fries with a drink &amp;4 burgers. That made mom &amp; dad &#8220;happy&#8221;.', (string)$set);
     }
 }
