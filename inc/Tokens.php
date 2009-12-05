@@ -78,7 +78,7 @@ class Ellipsis extends Token
 }
 class Emdash extends Token
 {
-    protected $translatedText = '&#8212;';
+    protected $translatedText = '&#8202;&#8212;&#8202;';
 }
 class Quote extends Token
 {
