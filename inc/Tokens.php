@@ -15,7 +15,7 @@ abstract class Token
     protected static $verbatimTags = array(
         'code','pre',
     );
-    
+
     protected function __construct($text)
     {
         $this->text = $text;
@@ -61,12 +61,28 @@ abstract class Token
     {
         $set = Set::getInstance();
         if ($set->inTagContext(self::$verbatimTags)) {
-            return $this->text;
+            return self::ampReplace($this->text);
         } else {
             return $this->translated();
         }
     }
-    
+
+    public static function ampReplace($str)
+    {
+        return str_replace('&amp;','&#38;', htmlentities($str, ENT_NOQUOTES, 'utf-8', false));
+        /*
+        if (strpos($str, '&') === false) {
+            return $str;
+        }
+        $ret = '';
+        foreach (explode('&', $str) as $bit) {
+            if (strpos($str, ';') === false) {
+                $ret .= html
+            }
+        }
+        return str_replace('&','&#38;', $str);
+      */
+    }
 }
 
 class Plaintext extends Token {}
@@ -119,11 +135,132 @@ abstract class Tag extends Token
 }
 class OpenTag extends Tag
 {
+    const SPLIT = '/([\'" =])/';
+
+    // these are just named so we can var_dump($this->context) for debugging
+    const TYPE_TAG = 'tag';
+    const TYPE_ATTRIBUTE = 'attr';
+    const TYPE_EQUALS = 'eq';
+    const TYPE_VALUE = 'val';
+    const TYPE_QUOTE = 'quote';
+    const TYPE_SPACE = 'space';
+    
+    const CONTEXT_BEGIN = 0;
+    const CONTEXT_NONE = 1;
+    const CONTEXT_ATTRIBUTE = 2;
+    
+    protected $capture = array();
+    
     protected function __construct($text)
     {
         $this->text = $text;
         $set = Set::getInstance();
         $set->pushTagContext(self::tagToText($text));
+        $this->calculateAttributes();
+    }
+    
+    protected function calculateAttributes()
+    {
+        $context = self::CONTEXT_BEGIN;
+        $tokens = preg_split(self::SPLIT, trim($this->text, '<>'), -1, PREG_SPLIT_DELIM_CAPTURE);
+        $tokens = array_values(array_filter($tokens)); // drop actually empty values
+        $attributeQuote = null;
+        for ($i=0, $end=count($tokens); $i<$end; $i++) {
+            switch ($context) {
+                case self::CONTEXT_BEGIN:
+                    $this->capture[] = array(
+                        'type' => self::TYPE_TAG,
+                        'value' => $tokens[$i],
+                    );
+                    $context = self::CONTEXT_NONE;
+                    break;
+
+                case self::CONTEXT_ATTRIBUTE:
+                    // $attributeQuote = null;
+                    while ($i<$end && $tokens[$i] != $attributeQuote) {
+                        $this->capture[] = array(
+                            'type' => self::TYPE_VALUE,
+                            'value' => $tokens[$i++],
+                        );
+                    }
+                    $this->capture[] = array(
+                        'type' => self::TYPE_QUOTE,
+                        'value' => $tokens[$i],
+                    );
+                    $context = self::CONTEXT_NONE;
+                    break;
+
+                case self::CONTEXT_NONE:
+                    // whitespace is easy
+                    if (self::isWhitespace($tokens[$i])) {
+                        $this->capture[] = array(
+                            'type' => self::TYPE_SPACE,
+                            'value'=> $tokens[$i],
+                        );
+                        continue;
+                    }
+                    // otherwise must be an attribute name
+                    $this->capture[] = array(
+                        'type' => self::TYPE_ATTRIBUTE,
+                        'value'=> $tokens[$i],
+                    );
+                    // there might be whitespace after an attribute name; if so capture it
+                    if (self::isWhitespace($tokens[$i+1])) {
+                        $this->capture[] = array(
+                            'type' => self::TYPE_SPACE,
+                            'value'=> $tokens[++$i],
+                        );
+                    }
+                    // now check for equals. If there's not one, then just continue; attribute has no value.
+                    if ('=' != $tokens[$i+1]) {
+                        continue;
+                    }
+                    $this->capture[] = array(
+                        'type' => self::TYPE_EQUALS,
+                        'value'=> $tokens[++$i],
+                    );
+                    // there might be whitespace after an equals sign; if so capture it
+                    if (self::isWhitespace($tokens[$i+1])) {
+                        $this->capture[] = array(
+                            'type' => self::TYPE_SPACE,
+                            'value'=> $tokens[++$i],
+                        );
+                    }
+                    // next token should be a quote; capture:
+                    // note: it's possible that it's not a quote, but let's hope that no one is pretty-entitying really broken HTML
+                    // note2: yeah yeah.. wishful thinking
+                    $this->capture[] = array(
+                        'type' => self::TYPE_QUOTE,
+                        'value'=> $tokens[++$i],
+                    );
+                    $attributeQuote = $tokens[$i];
+                    $context = self::CONTEXT_ATTRIBUTE;
+                    break;
+            }
+        }
+    }
+    
+    protected static function isWhitespace($token)
+    {
+        return preg_match('/^\s+$/', $token);
+    }
+
+    public function __toString()
+    {
+        $set = Set::getInstance();
+        if ($set->inTagContext(self::$verbatimTags)) {
+            return $this->text;
+        } else {
+            $str = '<';
+            foreach ($this->capture as $token) {
+                if (self::TYPE_VALUE == $token['type']) {
+                    $str .= self::ampReplace($token['value']);
+                } else {
+                    $str .= $token['value'];
+                }
+            }
+            return "{$str}>";
+        }
     }
 }
 class CloseTag extends Tag {
@@ -133,8 +270,17 @@ class CloseTag extends Tag {
         $set = Set::getInstance();
         $set->popTagContext(self::tagToText($text), false);
     }
+    public function __toString()
+    {
+        $set = Set::getInstance();
+        if ($set->inTagContext(self::$verbatimTags)) {
+            return $this->text;
+        } else {
+            return $this->translated();
+        }
+    }
 }
-class SelfClosingTag extends Tag {}
+class SelfClosingTag extends OpenTag {}
 
 class Set implements \Iterator
 {
