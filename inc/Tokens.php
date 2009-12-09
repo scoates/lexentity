@@ -20,6 +20,9 @@ abstract class Token
         '&amp;' => '&#38;',
         '&lt;' => '&#60;',
         '&gt;' => '&#62;',
+        '“' => '&#8220;', // cheat
+        '”' => '&#8221;', // cheat
+        '’' => '&#8217;', // cheat
     );
 
     protected function __construct($text)
