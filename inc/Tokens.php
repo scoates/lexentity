@@ -16,6 +16,12 @@ abstract class Token
         'code','pre',
     );
 
+    protected static $numericEntities = array(
+        '&amp;' => '&#38;',
+        '&lt;' => '&#60;',
+        '&gt;' => '&#62;',
+    );
+
     protected function __construct($text)
     {
         $this->text = $text;
@@ -69,19 +75,11 @@ abstract class Token
 
     public static function ampReplace($str)
     {
-        return str_replace('&amp;','&#38;', htmlentities($str, ENT_NOQUOTES, 'utf-8', false));
-        /*
-        if (strpos($str, '&') === false) {
-            return $str;
-        }
-        $ret = '';
-        foreach (explode('&', $str) as $bit) {
-            if (strpos($str, ';') === false) {
-                $ret .= html
-            }
-        }
-        return str_replace('&','&#38;', $str);
-      */
+        return str_replace(
+            array_keys(self::$numericEntities),
+            array_values(self::$numericEntities),
+            htmlentities($str, ENT_NOQUOTES, 'utf-8', false)
+        );
     }
 }
 
