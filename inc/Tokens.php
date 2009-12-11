@@ -70,9 +70,9 @@ abstract class Token
     {
         $set = Set::getInstance();
         if ($set->inTagContext(self::$verbatimTags)) {
-            return self::ampReplace($this->text);
+            return $this->text;
         } else {
-            return $this->translated();
+            return self::ampReplace($this->translated());
         }
     }
 

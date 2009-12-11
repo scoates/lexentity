@@ -40,18 +40,18 @@ class UserControllerTest extends PHPUnit_Framework_TestCase
     public function testTranslationReplace()
     {
         $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::REPLACETEXT));
-        $this->assertEquals('Foo&#8230; bar&#8202;&#8212;&#8202;baz, bar&#8202;&#8212;&#8202;baz <code>foo--bar...baz—bar!</code> <pre>foo--bar...baz—bar!</pre> whatever&#8202;&#8212;&#8202;I don&#8217;t care', (string)$set);
+        $this->assertEquals('Foo&#8230; bar&#8201;&#8212;&#8201;baz, bar&#8201;&#8212;&#8201;baz <code>foo--bar...baz—bar!</code> <pre>foo--bar...baz—bar!</pre> whatever&#8201;&#8212;&#8201;I don&#8217;t care', (string)$set);
     }
     
     public function testTranslationURL()
     {
         $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::URLTEXT));
-        $this->assertEquals('Hello <a href="http://example.com/foo=1&38;bar=2">person</a>.', (string)$set);
+        $this->assertEquals('Hello <a href="http://example.com/foo=1&#38;bar=2">person</a>.', (string)$set);
     }
 
     public function testTranslationNonEntity()
     {
         $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::NONENTITYTEXT));
-        $this->assertEquals('I went to the A&amp;P after the A&amp;W where I got free fries with a drink &amp;4 burgers. That made mom &amp; dad &#8220;happy&#8221;.', (string)$set);
+        $this->assertEquals('I went to the A&#38;P after the A&#38;W where I got free fries with a drink &#38;4 burgers. That made mom &#38; dad &#8220;happy&#8221;.', (string)$set);
     }
 }
