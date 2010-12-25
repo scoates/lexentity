@@ -206,14 +206,14 @@ class OpenTag extends Tag
                         'value'=> $tokens[$i],
                     );
                     // there might be whitespace after an attribute name; if so capture it
-                    if (self::isWhitespace($tokens[$i+1])) {
+                    if (isset($tokens[$i+1]) && self::isWhitespace($tokens[$i+1])) {
                         $this->capture[] = array(
                             'type' => self::TYPE_SPACE,
                             'value'=> $tokens[++$i],
                         );
                     }
                     // now check for equals. If there's not one, then just continue; attribute has no value.
-                    if ('=' != $tokens[$i+1]) {
+                    if (!isset($tokens[$i+1]) || (isset($tokens[$i+1]) && '=' != $tokens[$i+1])) {
                         continue;
                     }
                     $this->capture[] = array(
