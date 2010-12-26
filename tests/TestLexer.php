@@ -11,7 +11,8 @@ class UserControllerTest extends PHPUnit_Framework_TestCase
     const REPLACETEXT = 'Foo... bar—baz, bar--baz <code>foo--bar...baz—bar!</code> <pre>foo--bar...baz—bar!</pre> whatever—I don\'t care';
     const URLTEXT = 'Hello <a href="http://example.com/foo=1&bar=2">person</a>.';
     const NONENTITYTEXT = 'I went to the A&P after the A&W where I got free fries with a drink &4 burgers. That made mom & dad &#8220;happy&#8221;.';
-    
+    const ELLIPSISTEXT = 'one, two…seven, eight';
+
     public function testSplit()
     {
         $Lexer = new LexEntity\Lexer(self::SIMPLETEXT);
@@ -53,5 +54,11 @@ class UserControllerTest extends PHPUnit_Framework_TestCase
     {
         $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::NONENTITYTEXT));
         $this->assertEquals('I went to the A&#38;P after the A&#38;W where I got free fries with a drink &#38;4 burgers. That made mom &#38; dad &#8220;happy&#8221;.', (string)$set);
+    }
+
+    public function testEllipsis()
+    {
+        $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::ELLIPSISTEXT));
+        $this->assertEquals('one, two&#8230;seven, eight', (string)$set);
     }
 }
