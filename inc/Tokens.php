@@ -67,6 +67,11 @@ abstract class Token
         }
     }
 
+    protected static function isWhitespace($str)
+    {
+        return preg_match('/^\s+$/', $str);
+    }
+
     public static function ampReplace($str)
     {
         $buf = htmlentities($str, ENT_NOQUOTES, 'UTF-8', false);
@@ -382,7 +387,21 @@ class Plaintext extends Token {}
 
 class Apostrophe extends Token
 {
-    protected $translatedText = '&#8217;';
+    protected function __construct($text)
+    {
+        $set = Set::getInstance();
+        $prev = $set->getPrev();
+        if (
+            false === $prev
+            || self::isWhitespace($prev)
+            || self::isWhitespace(substr($prev, -1))
+        ) {
+            $this->translatedText = '&#8216;';
+        } else {
+            $this->translatedText = '&#8217;';
+        }
+        parent::__construct($text);
+    }
 }
 class Ellipsis extends Token
 {
@@ -533,11 +552,6 @@ class OpenTag extends Tag
         }
     }
     
-    protected static function isWhitespace($token)
-    {
-        return preg_match('/^\s+$/', $token);
-    }
-
     public function __toString()
     {
         $set = Set::getInstance();
@@ -645,6 +659,15 @@ class Set implements \Iterator
             }
         }
         return false;
+    }
+
+    public function getPrev()
+    {
+        if ($this->index > 0) {
+            return $this->Lexer->chunks[$this->index - 1];
+        } else {
+            return false;
+        }
     }
     
     //// ITERATOR:
