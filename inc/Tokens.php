@@ -6,7 +6,7 @@ abstract class Token
     protected $text;
     protected $translatedText = null;
     protected static $types = array(
-        'Apostrophe' => "'",
+        'Singlequote' => "'",
         'Ellipsis' => '\.{3,}',
         'Quote' => '"',
         'Tag' => '<.*?>',
@@ -385,7 +385,7 @@ abstract class Token
 
 class Plaintext extends Token {}
 
-class Apostrophe extends Token
+class Singlequote extends Token
 {
     protected function __construct($text)
     {
