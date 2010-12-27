@@ -88,8 +88,8 @@ abstract class Token
             $val = '&#' . $class::uniord($val) . ';';
         });
         return str_replace(
-            ($text),
-            ($numeric),
+            $text,
+            $numeric,
             $buf
         );
     }
