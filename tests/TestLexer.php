@@ -12,6 +12,8 @@ class UserControllerTest extends PHPUnit_Framework_TestCase
     const URLTEXT = 'Hello <a href="http://example.com/foo=1&bar=2">person</a>.';
     const NONENTITYTEXT = 'I went to the A&P after the A&W where I got free fries with a drink &4 burgers. That made mom & dad &#8220;happy&#8221;.';
     const ELLIPSISTEXT = 'one, two…seven, eight';
+    const COMMENTCDATATEXT = "one <!-- two <s> three --> four <![CDATA[ \"five\" ]]> six";
+    const SINGLEQUOTE = "he said 'hello' and then left";
 
     public function testSplit()
     {
@@ -60,5 +62,17 @@ class UserControllerTest extends PHPUnit_Framework_TestCase
     {
         $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::ELLIPSISTEXT));
         $this->assertEquals('one, two&#8230;seven, eight', (string)$set);
+    }
+
+    public function testCommentCdata()
+    {
+        $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::COMMENTCDATATEXT));
+        $this->assertEquals("one <!-- two <s> three --> four <![CDATA[ \"five\" ]]> six", (string)$set);
+    }
+
+    public function testSingleQuote()
+    {
+        $set = LexEntity\Token\Set::getInstance(new LexEntity\Lexer(self::SINGLEQUOTE));
+        $this->assertEquals("he said &#8216;hello&#8217; and then left", (string)$set);
     }
 }
