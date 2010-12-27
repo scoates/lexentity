@@ -16,16 +16,6 @@ abstract class Token
         'code','pre',
     );
 
-    protected static $numericEntities = array(
-        '&amp;' => '&#38;',
-        '&lt;' => '&#60;',
-        '&gt;' => '&#62;',
-        '&hellip;' => '&#8230;',
-        '“' => '&#8220;', // cheat
-        '”' => '&#8221;', // cheat
-        '’' => '&#8217;', // cheat
-    );
-
     protected function __construct($text)
     {
         $this->text = $text;
