@@ -9,7 +9,7 @@ abstract class Token
         'Singlequote' => "'",
         'Ellipsis' => '\.{3,}',
         'Quote' => '"',
-        'Tag' => '<.*?>',
+        'Tag' => '<!--.*?-->|<\!\[CDATA\[.*\]\]>|<.*?>',
         'Emdash' => '—|--',
     );
     protected static $verbatimTags = array(
