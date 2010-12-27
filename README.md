@@ -39,7 +39,7 @@ HTML. It's often (poorly) embedded in RSS or other HTML-like media, as XML.
 
 Therefore, it is important to avoid HTML-specific entities like
 <code>&rdquo;</code> and <code>&hellip;</code>, and instead use their Unicode
-code point to form numeric entities such as <code>&#8230;</code>. This ensures
+code point to form numeric entities such as <code>&amp;#8230;</code>. This ensures
 proper display on any terminal that can properly render Unicode XML, and avoids
 missing entity errors.
 
